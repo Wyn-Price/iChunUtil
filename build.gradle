@@ -18,12 +18,12 @@ compileJava {
     sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-version = "1.12.2-7.1.4"
+version = "1.12.2-7.2.2"
 group = "me.ichun"
 archivesBaseName = "iChunUtil"
 
 minecraft {
-    version = "1.12.2-14.23.2.2624"
+    version = "1.12.2-14.23.5.2847"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -78,5 +78,20 @@ task apiJar(type: Jar) {
     classifier = 'api'
 }
 
+// sign jar
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf {
+        project.hasProperty('keyStore')
+    }
+
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+
+    keyStore = project.properties.keyStore
+    alias = project.properties.keyStoreAlias
+    storePass = project.properties.keyStorePass
+    keyPass = project.properties.keyStoreKeyPass
+}
+
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, deobfJar, apiJar
+build.dependsOn sourceJar, deobfJar, apiJar, signJar
